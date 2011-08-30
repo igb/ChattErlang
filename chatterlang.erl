@@ -1,6 +1,6 @@
 -module(chatterlang).
 
--export([login/3,login/4,post_link/4,update_status/3,post_file_to_group/7]).
+-export([login/3,login/4,post_link/4,update_status/3,post_file_to_group/7,post_file/5]).
 
 login (Username, Password, SecurityToken)->
   sfdc:login(Username, Password, SecurityToken).
@@ -47,6 +47,7 @@ post_file(PostBody, Description, Name, File, SessionId, Endpoint)->
 		    {"ContentData", "base64Binary", base64:encode_to_string(File)}
 		   ],
     sfdc:create(PostFileObject, SessionId, Endpoint).
+
 											     
 
     
