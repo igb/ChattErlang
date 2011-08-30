@@ -36,14 +36,15 @@ update_status(Status, SessionId, Endpoint)->
 
 
 
-post_file_to_group(GroupId, PostBody, Description, Name, File, SessionId, Endpoint)->
+post_file(PostBody, Description, Name, File, SessionId, Endpoint)->
+    Id=get_current_user_id(SessionId, Endpoint),
     PostFileObject=[
-		    {"type", "string", "FeedPost"},
-		    {"ParentId", "string", GroupId},
+		    {"type", "string", "FeedItem"},
+		    {"ParentId", "string", UserId},
 		    {"Body", "string", PostBody},
 		    {"ContentDescription", "string", Description},
 		    {"ContentFileName", "string", Name},
-		    {"ContentData", "base64Binary", File}
+		    {"ContentData", "base64Binary", base64:encode_to_string(File)}
 		   ],
     sfdc:create(PostFileObject, SessionId, Endpoint).
 											     
