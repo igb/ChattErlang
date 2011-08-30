@@ -1,6 +1,6 @@
 -module(chatterlang).
 
--export([login/3,login/4,post_link/4,post_status/3]).
+-export([login/3,login/4,post_link/4,update_status/3,post_file_to_group/7]).
 
 login (Username, Password, SecurityToken)->
   sfdc:login(Username, Password, SecurityToken).
@@ -22,7 +22,9 @@ post_link(Url, Description, SessionId, Endpoint)->
 	_ ->  sfdc:create(lists:flatten([PostLinkSobject,{"Title", "string", Description}]), SessionId, Endpoint)
     end.
 
-post_status(Status, SessionId, Endpoint)->
+
+
+update_status(Status, SessionId, Endpoint)->
     Id=get_current_user_id(SessionId, Endpoint),
     UpdateStatusSobject=[
 			 {"type", "string", "User"},
@@ -32,8 +34,23 @@ post_status(Status, SessionId, Endpoint)->
     
     sfdc:update(UpdateStatusSobject, SessionId, Endpoint).
 
+
+
+post_file_to_group(GroupId, PostBody, Description, Name, File, SessionId, Endpoint)->
+    PostFileObject=[
+		    {"type", "string", "FeedPost"},
+		    {"ParentId", "string", GroupId},
+		    {"Body", "string", PostBody},
+		    {"ContentDescription", "string", Description},
+		    {"ContentFileName", "string", Name},
+		    {"ContentData", "base64Binary", File}
+		   ],
+    sfdc:create(PostFileObject, SessionId, Endpoint).
+											     
+
     
 get_current_user_id(SessionId, Endpoint)->
     UserInfo=sfdc:get_user_info(SessionId, Endpoint),
     {_,_,Id}=lists:keyfind("userId", 1, UserInfo),
     Id.
+
